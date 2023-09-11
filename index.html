@@ -1,0 +1,81 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 30, left: 30},
+    width = 1000 - margin.left - margin.right,
+    height = 1000 - margin.top - margin.bottom;
+
+// append the svg object to the body of the page
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Parse the Data
+d3.csv("https://gist.githubusercontent.com/Carr1005/66200e541ecce03cfb8d727c477e1d61/raw/998d5660ebb826b7dc9511167fa7040ab2ce528e/input.csv", function(data) {
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 620])
+    .range([ 0, width]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([ 0, height])
+    .domain(data.map(function(d) { return d.group; }))
+    .paddingOuter(20)
+    .paddingInner(0)
+  // svg.append("g")
+  //   .call(d3.axisLeft(y))
+
+  // Lines
+  svg.selectAll("myline")
+    .data(data)
+    .enter()
+    .append("line")
+      .attr("x1", function(d) { return x(d.value1); })
+      .attr("x2", function(d) { return x(d.value2); })
+      .attr("y1", function(d) { return y(d.group); })
+      .attr("y2", function(d) { return y(d.group); })
+      .attr("stroke", "#fd4a614a")
+      .attr("stroke-width", "0.3px")
+
+  // Circles of variable 1
+  svg.selectAll("mycircle")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function(d) { return x(d.value2); })
+      .attr("cy", function(d) { return y(d.group); })
+      .attr("r", "2")
+      .style("fill", "#69b3a266")
+
+  // Circles of variable 2
+  svg.selectAll("mycircle")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function(d) { return x(d.value1); })
+      .attr("cy", function(d) { return y(d.group); })
+      .attr("r", "2")
+      .style("fill", "#4c408266")
+})
+
+</script>
